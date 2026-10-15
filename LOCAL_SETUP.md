@@ -20,3 +20,11 @@ Stage 1 world run: full budget, not --quick. Reactive world: zero collisions; re
 Windows sandbox initially blocked a NumPy DLL with Application Control. Running the same interpreter outside the sandbox succeeded, without changing Windows security settings.
 
 Stage 1 verification: tests/test_parity.py — 10 passed in 89.99 seconds. Python and JavaScript simulator parity confirmed.
+
+## Stage 2 implementation
+
+Implemented the ten functions in lab11 only: vectorized leader TTC and contact geometry, trajectory progress/harsh braking, physical feasibility, Wilson interval, stable CEM elite update, defensive-mixture log weights, ordinary IS estimate and Kish ESS, ordered failure classification, and TRAIN-only policy ranking.
+
+Public TODO tests: 31 passed. Additional checks passed for stable equal-score CEM ranking, Wilson zero/all-event endpoints, and tiny-weight ESS. No changes to avsim/, run_all.py, tests/ or policy_candidates.json. Later stages must interpret zero-hit estimates with the pipeline's upper bounds, not as proof of zero risk.
+
+Stage 2 full verification: 41 tests passed in 34.25 seconds (31 TODO tests + 10 Python/JavaScript parity tests).
