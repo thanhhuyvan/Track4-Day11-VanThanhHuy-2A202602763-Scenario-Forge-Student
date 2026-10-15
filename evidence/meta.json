@@ -24,13 +24,21 @@
   "estimate": {
    "quick": false,
    "at": "2026-10-15 17:12"
+  },
+  "fix": {
+   "quick": false,
+   "at": "2026-10-15 17:17"
+  },
+  "export": {
+   "quick": false,
+   "at": "2026-10-15 17:34"
   }
  },
  "_run": {
   "mssv": "202602763",
   "town": "B",
   "quick": false,
-  "step": "estimate",
+  "step": "export",
   "salted": false,
   "budgets": {
    "replay_n": 400,

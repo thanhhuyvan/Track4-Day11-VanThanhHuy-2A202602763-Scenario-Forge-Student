@@ -1,0 +1,87 @@
+{
+  "items": [
+    {
+      "id": "B-01",
+      "file": "bus_bypass.png",
+      "time": 12.450000000000001,
+      "events": [
+        {
+          "t": 12.450000000000001,
+          "f": 249,
+          "a": "ego",
+          "b": "C2",
+          "kind": "contact",
+          "x": 93.02023496287785,
+          "z": 2.636137738399393,
+          "fake": false
+        }
+      ],
+      "policy": {
+        "v0": 12.5,
+        "T": 1.6,
+        "a": 1.4,
+        "b": 2,
+        "s0": 2.5,
+        "cautionV": 7.5,
+        "cautionRange": 55,
+        "pedBuffer": 2.5,
+        "cutinLat": 2.15
+      },
+      "readout": "kiểu\nlách qua xe buýt\nchính sách của bạn\nva chạm xe cắt làn 12,5 s\nchính sách gốc\nkhông va chạm\nmặt đường\nướt (μ 0,5)\nkhe chấp nhận khi cắt làn\n6,1 m\nngười đi bộ ngó qua xe buýt\nkhông"
+    },
+    {
+      "id": "C-01",
+      "file": "crosswalk_block.png",
+      "time": 20.900000000000002,
+      "events": [
+        {
+          "t": 20.900000000000002,
+          "f": 418,
+          "a": "ego",
+          "b": "P1",
+          "kind": "block",
+          "x": 120.86644014125875,
+          "z": 2.6215654256688588,
+          "fake": false
+        }
+      ],
+      "policy": {
+        "v0": 12.5,
+        "T": 1.6,
+        "a": 1.4,
+        "b": 2,
+        "s0": 2.5,
+        "cautionV": 7.5,
+        "cautionRange": 55,
+        "pedBuffer": 2.5,
+        "cutinLat": 2.15
+      },
+      "readout": "kiểu\nchặn lối người đi bộ\nchính sách của bạn\nchặn lối người đi bộ 20,9 s\nchính sách gốc\nchặn lối 20,9 s\nmặt đường\nướt (μ 0,5)\nkhe chấp nhận khi cắt làn\n24,7 m\nngười đi bộ ngó qua xe buýt\nkhông"
+    },
+    {
+      "id": "FIX-01",
+      "file": "policy_fix_ghost.png",
+      "time": 12.450000000000001,
+      "events": [],
+      "baseline_events": [
+        {
+          "t": 12.450000000000001,
+          "f": 249,
+          "a": "ego",
+          "b": "C2",
+          "kind": "contact",
+          "x": 93.02023496287785,
+          "z": 2.636137738399393,
+          "fake": false
+        }
+      ],
+      "policy": {
+        "cutinLat": 3
+      },
+      "readout": "kiểu\nlách qua xe buýt\nchính sách của bạn\nkhông va chạm\nchính sách gốc\nva chạm 12,5 s\nmặt đường\nướt (μ 0,5)\nkhe chấp nhận khi cắt làn\n6,1 m\nngười đi bộ ngó qua xe buýt\nkhông"
+    }
+  ],
+  "errors": [],
+  "source": "evidence/viewer.json",
+  "comparison_note": "FIX-01 replays the same baseline failure scenario with chosen policy as main and baseline as ghost; no world parameters changed."
+}

@@ -62,11 +62,36 @@ Cut_in và rear_ended đều zero-hit trong ba seed; dùng **upper_zero_hits=3/(
 | crosswalk_block | {'crosswalk_block': 64, 'bus_bypass': 1} | 28 |
 | rear_ended | {'bus_bypass': 36, 'crosswalk_block': 3} | 7 |
 
-Mỗi cuộc săn có 8 vòng × 300 mẫu; cloud.json có 9600 điểm gồm cả đầu vào bị loại. Hai cuộc săn đúng đích bus_bypass và crosswalk_block tìm được lần lượt 163 và 64 thất bại đúng kiểu. Cuộc săn cut_in/rear_ended chưa tìm thấy thất bại đúng đích; chúng lại tìm được các kiểu khác. Điều này không chứng minh hai kiểu đó không tồn tại. Một cuộc săn chung có thể co về kiểu dễ tìm và bỏ qua các cơ chế khác. Ảnh 3D và chuỗi sự kiện cụ thể sẽ được bổ sung ở stage 5 sau export; chưa mô tả diễn biến chưa quan sát.
+Mỗi cuộc săn có 8 vòng × 300 mẫu; cloud.json có 9600 điểm gồm cả đầu vào bị loại. Hai cuộc săn đúng đích bus_bypass và crosswalk_block tìm được lần lượt 163 và 64 thất bại đúng kiểu. Cuộc săn cut_in/rear_ended chưa tìm thấy thất bại đúng đích; chúng lại tìm được các kiểu khác. Điều này không chứng minh hai kiểu đó không tồn tại. Một cuộc săn chung có thể co về kiểu dễ tìm và bỏ qua các cơ chế khác. Ảnh dưới chụp viewer gốc chương 9, dùng tham số nguyên độ chính xác từ evidence/viewer.json, không dùng mẫu giảng viên. Trong hai ảnh lỗi, xe đặc được pin ở policy gốc của cuộc săn, bóng mờ là policy sửa; nhãn UI cố định “chính sách của bạn/gốc” có thể đảo nghĩa trong chế độ run được pin. Ảnh FIX-01 ở câu 6 dùng policy sửa làm xe chính và policy gốc làm bóng, khớp nhãn UI.
+
+**Bus bypass, B-01:** xe C2 lách qua xe buýt đỗ và lấn sang làn ego. Trên đường ướt μ=0,5, khe chấp nhận 6,1 m, policy gốc nhận xe lấn là leader quá muộn và chạm C2 lúc **t=12,45 s**. Tại sự kiện C2 x=95,28 m, v=1,09 m/s; ego x=90,76 m, v=5,02 m/s. C2 thỏa điều kiện x<112, v<6 của mode bus_bypass.
+
+![Bus bypass](evidence/shots/bus_bypass.png)
+
+**Crosswalk block, C-01:** người đi bộ không ngó qua xe buýt (pedLook=0), xuất hiện trên vạch; ego phanh và đứng lại nhưng thân xe chắn đường đi. Sự kiện **kind=block tại t=20,9 s**, không phải người đi bộ bước vào thân xe: ego x=119,73 m và P1 x=122 m, cả hai v=0. Bản sửa cutinLat không giải quyết được cảnh này; bóng và xe chính cùng chặn lối.
+
+![Crosswalk block](evidence/shots/crosswalk_block.png)
 
 ## 6. Sửa planner (bước E + 3D)
 
-`fix.json`: policy được chọn, `fail` và `fail_hi` trên TRAIN, trên TEST (`fail_hi_seen` và `fail_hi`), và của policy gốc trên TEST; vì sao `fail_hi` của bản sửa có thể lớn hơn `fail` của policy gốc dù bản sửa tốt hơn thật? quãng đường và số lần phanh gấp. Một ảnh chụp 3D có **bóng mờ** (policy gốc) cho một kịch bản mà bản sửa tránh được. Có núm chỉnh nào "nghe thì an toàn hơn" nhưng thực tế làm tăng thất bại? Giải thích bằng cách thế giới phản ứng lại.
+`fix.json`: chọn **cutinLat=3,0 m** (gốc 2,15 m), các núm còn lại giữ mặc định. Bộ chọn chỉ dùng table TRAIN: đủ tiến độ ≥95% baseline_train, sau đó tối thiểu fail_hi, hòa thì ưu tiên tiến độ cao hơn. 12 ứng viên dùng cùng TRAIN draws. Đã đối chiếu choose_policy chạy lại trên table cho đúng chosen; không chọn lại theo TEST.
+
+| Tập / policy | fail | fail_hi_seen | fail_hi | Tiến độ m | Frame phanh gấp trung bình |
+|---|---:|---:|---:|---:|---:|
+| TRAIN gốc | 0.0020632338 | 0.0036233425 | 0.0036233425 | 219.9791 | 7.6016 |
+| TRAIN chọn | 1.4358707e-06 | 2.2340737e-06 | 2.2340737e-06 | 219.9605 | 7.4805 |
+| TEST gốc | 0.0006906345 | 0.0012386843 | 0.00251758 | 213.7865 | 8.5803 |
+| TEST chọn | 3.8243457e-08 | 7.5920836e-08 | 0.038778972 | 213.6267 | 8.2473 |
+
+TEST dùng seed mới, săn lại cho từng policy và tập tự nhiên riêng 3000 kịch bản. Mất tiến độ **0.0747%** so policy gốc TEST, dưới 5%. harsh là **số frame a<−3 m/s² trung bình mỗi kịch bản**, không phải số lần bắt đầu một đợt phanh riêng biệt. Quãng đường dừng tính tại va chạm, không cộng phần chạy tiếp sau đó.
+
+Bản sửa có fail rất nhỏ nhưng bus_bypass zero-hit, nên TEST cộng **3/(0,2×400)=0,0375** cho mode này; phần other zero/3000 cộng Wilson upper=0,001278896. Vì vậy fail_hi≈0,038779 lớn hơn fail_hi gốc≈0,002518 và lớn hơn cả point fail của gốc. Điều đó không chứng minh bản sửa kém hơn: ngân sách chỉ đủ quan sát xu hướng, chưa đủ chứng nhận đã loại lỗi hiếm. Không dùng fail_hi_seen≈7,59e-8 như cận an toàn đầy đủ của policy. Với yêu cầu riêng một mode zero-hit upper<1e-3, cần trên 15000 mẫu của mixture này.
+
+Ảnh FIX-01 dùng **cùng tham số B-01**, policy sửa làm xe chính và policy gốc làm bóng mờ. Ego sửa nhận xe lấn là leader sớm hơn; không có ego-event trong rollout 24 s, trong khi bóng policy gốc chạm C2 lúc 12,45 s. File viewer_capture.json chỉ thêm run so sánh, không thay thế evidence/viewer.json chính thức hoặc thay tham số thế giới.
+
+![Policy sửa và bóng gốc](evidence/shots/policy_fix_ghost.png)
+
+Ví dụ núm nghe an toàn hơn: T=2,0 (gốc 1,6) cho TRAIN fail≈0,00274, hi≈0,00563, cao hơn gốc TRAIN fail≈0,00206, hi≈0,00362. Khoảng còn rộng, chưa chứng minh tăng xác suất thật. Một cơ chế khả dĩ là ego chừa khe lớn hơn khiến xe khác chấp nhận cắt vào, rồi phanh/nhường lại tạo tình huống khác; đây là giả thuyết về tương tác, không kết luận nhân quả chỉ từ bảng. cautionV=5 cũng giảm tiến độ xuống 175,6 m, không qua ràng buộc tiến độ. Không sửa policy theo số TEST công khai.
 
 ## 7. Từ mô phỏng ra đường thật
 

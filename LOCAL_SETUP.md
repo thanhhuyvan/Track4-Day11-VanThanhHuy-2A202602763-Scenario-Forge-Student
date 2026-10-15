@@ -47,3 +47,9 @@ Files: evidence/replay.json, mc.json, hunt.json, cloud.json, meta.json. Simulato
 ## Stage 4 completed
 
 Full importance sampling: 3 seeds x 4 modes x 600 samples = 7200 additional samples; budget including hunt = 16800. Runtime about 249 seconds. Total estimates: [0.0017715020489589537, 0.0008765616694409755, 0.0013334928953450914]. Median 0.0013334928953450914. Zero-hit cut_in/rear_ended require upper_zero_hits=0.025 per seed/mode. Crosswalk_block seed 2 top_share=0.9948983 indicates severe one-sample dominance. REPORT question 4 includes all 12 rows and limitations. Evidence provenance and zero-hit formula verified; simulator/seed unchanged.
+
+## Stage 5 completed
+
+Full fix runtime about 990 seconds on this host. All 12 original candidates evaluated on TRAIN; chosen cutinLat=3.0 verified against choose_policy. TEST re-hunts performed for chosen and baseline; each has two modes x 400 IS samples plus 3000 natural holdout scenarios. Chosen TEST fail=3.824345667584607e-08, fail_hi=0.03877897158564074; baseline fail=0.0006906344950796566, fail_hi=0.0025175800115916935. Progress loss 0.074741%. Zero-hit bus_bypass bound retained.
+
+Export: 11 runs and 6000 cloud points. Real viewer screenshots in evidence/shots, captured with Chrome/Playwright; comparison adds FIX-01 to viewer_capture.json without modifying the official viewer/core. Browser dependency was reused from an existing local Playwright installation. Original avsim/, viewer/, tests/, run_all.py, policy_candidates.json unchanged.
