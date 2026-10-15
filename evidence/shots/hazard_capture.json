@@ -1,0 +1,14 @@
+{
+  "event": {
+    "t": 8.9,
+    "f": 178,
+    "a": "ego",
+    "b": "H0",
+    "kind": "contact",
+    "x": 60.818967549396405,
+    "z": 2.3759319181381775,
+    "fake": false
+  },
+  "readout": "planner\nva chạm xe đạp · 8,9 s\nplanner gốc\nva chạm xe đạp · 8,9 s\nva chạm giữa xe khác\nkhông\ntốc độ xe ta lúc này\n31 km/h\nrắc rối đang có\n1 / 4",
+  "source": "chapter10 textarea after importing hazard_draft.json"
+}

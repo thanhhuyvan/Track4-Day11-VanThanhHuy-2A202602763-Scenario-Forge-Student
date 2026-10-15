@@ -1,0 +1,21 @@
+const fs=require('fs'),path=require('path');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE || 'playwright-core');
+const S=require(path.resolve('viewer/sim-core.js'));
+(async()=>{
+ const data=JSON.parse(fs.readFileSync('evidence/viewer.json'));
+ const run=data.runs.find(r=>r.id==='GC-01');if(!run)throw Error('Missing chosen-policy hazard example');
+ const R=S.rollout({ego:'planner',others:'reactive',params:run.params,policy:Object.assign({},S.POLICY,data.policy),hazards:run.hazards});
+ const ev=R.events.find(e=>e.a==='ego'||e.b==='ego');if(!ev)throw Error('Chosen policy should fail in this saved example');
+ const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true,args:['--enable-webgl','--enable-unsafe-swiftshader']});
+ const p=await browser.newPage({viewport:{width:1680,height:1050}});
+ await p.goto('file:///'+path.resolve('viewer/index.html').replace(/\\/g,'/')+'#lab');
+ await p.locator('#labFile').setInputFiles('evidence/viewer.json');
+ await p.waitForFunction(()=>document.querySelector('#labSrc').textContent.includes('viewer.json'));
+ await p.locator('#labRuns button').filter({hasText:'GC-01 ·'}).click();
+ if(await p.locator('#play').getAttribute('aria-label')==='Dừng')await p.locator('#play').click();
+ await p.locator('#time').evaluate((el,t)=>{el.value=String(t);el.dispatchEvent(new Event('input',{bubbles:true}));},ev.t+.05);
+ await p.waitForTimeout(1500);await p.locator('#labRead').scrollIntoViewIfNeeded();
+ await p.screenshot({path:'evidence/shots/hazard_chosen_failure.png'});
+ fs.writeFileSync('evidence/shots/hazard_chosen_capture.json',JSON.stringify({id:run.id,event:ev,readout:await p.locator('#labRead').innerText(),source:'evidence/viewer.json'},null,2));
+ console.log('Captured chosen policy remaining failure',ev);
+ await browser.close();})();

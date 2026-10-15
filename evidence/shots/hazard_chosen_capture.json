@@ -1,0 +1,15 @@
+{
+  "id": "GC-01",
+  "event": {
+    "t": 7.2,
+    "f": 144,
+    "a": "ego",
+    "b": "H0",
+    "kind": "contact",
+    "x": 39.90732589279267,
+    "z": 2.3818442352636957,
+    "fake": false
+  },
+  "readout": "kiểu\nrắc rối của bạn\nchính sách của bạn\nva chạm xe đạp 7,2 s\nchính sách gốc\nkhông va chạm\nmặt đường\nkhô\nkhe chấp nhận khi cắt làn\n12,0 m\nngười đi bộ ngó qua xe buýt\ncó\nrắc rối thêm vào\nH0 xe đạp lạng ra",
+  "source": "evidence/viewer.json"
+}

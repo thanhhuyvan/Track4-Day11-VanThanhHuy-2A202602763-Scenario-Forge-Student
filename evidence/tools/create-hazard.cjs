@@ -1,0 +1,20 @@
+const fs=require('fs'),path=require('path');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE || 'playwright-core');
+(async()=>{
+const b=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true,args:['--enable-webgl','--enable-unsafe-swiftshader']});
+const p=await b.newPage({viewport:{width:1680,height:1050}});
+await p.goto('file:///'+path.resolve('viewer/index.html').replace(/\\/g,'/')+'#studio');
+await p.locator('#stuOpen').setInputFiles('evidence/hazard_draft.json');
+await p.waitForFunction(()=>document.querySelector('#stuJson').value.includes('Conditional engineering'));
+const doc=await p.locator('#stuJson').inputValue();fs.writeFileSync('hazard.json',doc);
+if(await p.locator('#play').getAttribute('aria-label')==='Dừng')await p.locator('#play').click();
+const S=require(path.resolve('viewer/sim-core.js'));const d=JSON.parse(doc);
+const R=S.rollout({ego:'planner',params:d.params,policy:d.policy,hazards:d.hazards});
+const ev=R.events.find(e=>e.a==='ego'||e.b==='ego');
+if(!ev)throw Error('Exact scene expected to demonstrate contact');
+await p.locator('#time').evaluate((el,t)=>{el.value=String(t);el.dispatchEvent(new Event('input',{bubbles:true}));},ev.t+.05);
+await p.waitForTimeout(1500);await p.locator('#stuRead').scrollIntoViewIfNeeded();
+await p.screenshot({path:'evidence/shots/hazard_studio.png'});
+console.log('Chapter 10 exported hazard.json; event',ev,'readout',await p.locator('#stuRead').innerText());
+fs.writeFileSync('evidence/shots/hazard_capture.json',JSON.stringify({event:ev,readout:await p.locator('#stuRead').innerText(),source:'chapter10 textarea after importing hazard_draft.json'},null,2));
+await b.close();})();

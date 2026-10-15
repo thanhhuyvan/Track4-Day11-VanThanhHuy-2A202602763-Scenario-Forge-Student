@@ -103,13 +103,31 @@ Ba điều mà xác suất bạn báo **không** nói, ví dụ: thế giới ch
 
 ## 9. Rắc rối của bạn (bước G + chương 10)
 
-- **Rắc rối:** bạn dựng gì, và ngoài đời nó giống tình huống nào.
-- **Căn cứ:** vì sao bạn nghĩ planner sẽ xử lý kém.
-- **Giả định:** `space` và `exposure` lấy từ đâu (`hazard.json: why`).
-- **Kết quả**, theo `mine.json`:
-  - số va chạm `avoidable` (tránh được bằng phanh hết cỡ, biết trước), `unavoidable`, `unattributed`, và `low_speed`, với policy gốc và với policy bạn chọn; `accepted` (bao nhiêu phần `space` của bạn là khả thi);
-  - P(lỗi planner | rắc rối) kèm khoảng Wilson;
-  - tần suất mỗi chuyến, đặt cạnh tần suất lách xe buýt của bạn.
-- **Hình:** một ảnh chương 9 hoặc 10 ở lúc va chạm.
-- **Bạn tự lái thì sao:** nếu bạn đã thử lái, bạn tránh được không, và bạn làm gì khác planner?
-- **Cách sửa:** núm chỉnh nào sửa được rắc rối này? Nếu không núm nào sửa được, planner cần thêm **logic gì** (mô tả, không cần code)?
+**Rắc rối:** một xe đạp ở E2 lạng sang E1 khoảng một bề rộng làn (3,0–3,6 m), mô phỏng tránh một chướng ngại ở làn bên. Không khẳng định có ổ gà/xe đỗ trong model nếu không có actor đó: đó là động cơ ngoài đời để thiết kế card. Cảnh được nhập rồi xuất lại bằng chương 10; file `hazard.json` giữ format, params, policy và hazards đầy đủ. Cảnh cụ thể gốc có ego–H0 contact ở **8,9 s**, JS và Python cùng thời điểm.
+
+**Thiết kế và căn cứ:** một grid thử 18 trường hợp xe đạp trước đánh giá đã tìm thấy các va chạm tránh được, sau đó chốt space và không đổi sau mine. x=10–40 m là lân cận vị trí dựng x=25 m trên đoạn thẳng; trig=10–18 m thử sự lạng gần xe, không phải phân phối khe thực nghiệm. v=3,5–4,5 m/s (12,6–16,2 km/h) nằm trong khoảng quan sát 12–20 km/h được thảo luận trong [FHWA-HRT-05-137, chương 2](https://www.fhwa.dot.gov/publications/research/safety/pedbike/05137/chapter2.cfm). Nguồn này chỉ hỗ trợ độ lớn tốc độ, không chứng minh khoảng uniform hay tần suất cho thị trấn mô phỏng. swDur=2,7–3,0 s đảm bảo a_lat tối đa π²×3,6/(2×2,7²)≈2,44 m/s², dưới giới hạn 3 m/s² của studio; quãng lạng lấy từ bề rộng làn mô phỏng 3,5 m. Chi tiết có trong hazard.json: why.
+
+**Miền suy luận:** dùng `world: scene`, giữ nguyên giao thông của cảnh và quét 5 trường hazard. `exposure=1` nghĩa một card được chèn vào mỗi episode do thiết kế, **không phải** tần suất mỗi chuyến ngoài đời. Pipeline không sinh per_trip và không nhân exposure để so với bus_bypass của town B. Cần thống kê gặp xe đạp trên tuyến và quỹ đạo thực tế mới suy ra rủi ro mỗi chuyến. Đây là lựa chọn thử nghiệm có điều kiện được README cho phép, không thay đổi phân phối town B hoặc seed.
+
+**Kết quả:** accepted=1500/1500=100%; không có overlap lúc bắt đầu, không kịch bản bất khả thi. Mỗi policy đánh giá trên cùng 1500 biến thể bằng seed của đề.
+
+| Policy | n | Va chạm | Avoidable | Unavoidable | Unattributed | Low-speed | Foreknown avoidable | p lỗi có điều kiện | Wilson 95% |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| Gốc | 1500 | 1070 | 1070 | 0 | 0 | 0 | 1070 | 0.713333 | [0.689926; 0.735650] |
+| cutinLat=3,0 | 1500 | 577 | 577 | 0 | 0 | 3 | 577 | 0.384667 | [0.360370; 0.409553] |
+
+Policy sửa giảm lỗi có điều kiện từ 0,713333 xuống 0,384667, chênh lệch tuyệt đối 0,328667, giảm tương đối **46.07%** trong dải thử này. Vẫn còn 577 lỗi tránh được, nên bản sửa stage 5 không giải quyết đầy đủ hazard xe đạp. Ba va chạm low_speed của bản sửa vẫn nằm trong avoidable, không cộng thêm lần nữa. Không có khoảng cách giữa avoidable và avoidable_foreknown trong lượt này; không suy rộng thành che khuất không quan trọng ở cảnh khác.
+
+**Oracle và diễn giải:** avoidable là phanh tối đa ngay khi hazard bắt đầu và nhìn thấy, với tiền tố rollout giống planner gốc. Phản ứng tức thì và hiểu đúng nguy cơ là lạc quan, có thể đếm nhiều lỗi hơn mức planner thực tế tránh được. Ngược lại oracle chỉ thử phanh, chưa thử đánh lái, nên có thể bỏ sót cách tránh khác. Các tỷ lệ trên là nhãn theo chuẩn oracle, không phải ground truth an toàn thực địa.
+
+**Ảnh cảnh gốc, chương 10:**
+
+![Xe đạp lạng sang làn ego](evidence/shots/hazard_studio.png)
+
+**Ảnh một lỗi còn lại của policy sửa, GC-01:** chạm H0 lúc 7,2 s; hazard bắt đầu và oracle bắt đầu phanh lúc 5,4 s theo mine.json: chosen.examples[0]. Tham số này lấy nguyên từ biến thể của cuộc quét, không phải cảnh exact 8,9 s.
+
+![Policy sửa vẫn chạm xe đạp](evidence/shots/hazard_chosen_failure.png)
+
+**Tự lái:** chưa thực hiện thử nghiệm người lái; không có egoAcc và không khẳng định bản thân tránh được.
+
+**Đề xuất sửa tiếp:** thêm dự đoán hành lang chiếm chỗ theo vận tốc ngang của bike, tính time-to-lane-entry trước khi khoảng ngang rơi vào ngưỡng leader; giảm tốc nếu hành lang bike giao đường ego trong horizon ngắn. Chỉ tăng cutinLat là heuristic hữu ích nhưng không bao phủ chuyển động ngang liên tục. Chưa triển khai hoặc chọn lại policy trên dữ liệu mine để tránh báo một phép sửa hậu nghiệm như kết quả đã đo.
