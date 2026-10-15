@@ -1,0 +1,31 @@
+{
+ "seeds": {
+  "mc": 2662753553,
+  "search": 4122491291,
+  "test": 858513634
+ },
+ "steps": {
+  "world": {
+   "quick": false,
+   "at": "2026-10-15 16:51"
+  }
+ },
+ "_run": {
+  "mssv": "202602763",
+  "town": "B",
+  "quick": false,
+  "step": "world",
+  "salted": false,
+  "budgets": {
+   "replay_n": 400,
+   "mc_n": 3000,
+   "iters": 8,
+   "per_iter": 300,
+   "final_n": 600,
+   "seeds": 3,
+   "fix_n": 400,
+   "progress_n": 256,
+   "mine_n": 1500
+  }
+ }
+}
