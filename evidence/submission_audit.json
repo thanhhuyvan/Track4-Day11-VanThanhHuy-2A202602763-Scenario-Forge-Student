@@ -1,0 +1,133 @@
+{
+  "checks": [
+    {
+      "check": "MSSV and town seed provenance",
+      "status": "PASS"
+    },
+    {
+      "check": "All full-budget stages recorded",
+      "status": "PASS"
+    },
+    {
+      "check": "world provenance",
+      "status": "PASS"
+    },
+    {
+      "check": "replay provenance",
+      "status": "PASS"
+    },
+    {
+      "check": "mc provenance",
+      "status": "PASS"
+    },
+    {
+      "check": "hunt provenance",
+      "status": "PASS"
+    },
+    {
+      "check": "estimate provenance",
+      "status": "PASS"
+    },
+    {
+      "check": "fix provenance",
+      "status": "PASS"
+    },
+    {
+      "check": "mine provenance",
+      "status": "PASS"
+    },
+    {
+      "check": "MC counts and Wilson interval",
+      "status": "PASS"
+    },
+    {
+      "check": "Required modes found",
+      "status": "PASS"
+    },
+    {
+      "check": "Full hunt cloud",
+      "status": "PASS"
+    },
+    {
+      "check": "Three-seed IS budget",
+      "status": "PASS"
+    },
+    {
+      "check": "IS partition totals",
+      "status": "PASS"
+    },
+    {
+      "check": "Zero-hit bounds retained",
+      "status": "PASS"
+    },
+    {
+      "check": "Chosen policy follows TRAIN ranking",
+      "status": "PASS"
+    },
+    {
+      "check": "Progress constraint on TRAIN",
+      "status": "PASS"
+    },
+    {
+      "check": "TEST full holdout",
+      "status": "PASS"
+    },
+    {
+      "check": "Hazard format limits and space",
+      "status": "PASS"
+    },
+    {
+      "check": "Hazard full sweep and conditional domain",
+      "status": "PASS"
+    },
+    {
+      "check": "Hazard collision partition",
+      "status": "PASS"
+    },
+    {
+      "check": "Viewer includes chosen policy and hazard examples",
+      "status": "PASS"
+    },
+    {
+      "check": "Nine report answers and identity",
+      "status": "PASS"
+    },
+    {
+      "check": "Report local links",
+      "status": "PASS"
+    },
+    {
+      "check": "Five actual screenshot files",
+      "status": "PASS"
+    },
+    {
+      "check": "Official protected files unchanged",
+      "status": "PASS"
+    }
+  ],
+  "failures": 0,
+  "tests": {
+    "passed": 41,
+    "seconds": 78.94,
+    "note": "Final pytest outside Windows sandbox; in-sandbox parity temp-file permission failures are environmental."
+  },
+  "protected_reference": "origin/main",
+  "files_sha256": {
+    "REPORT.md": "4edd6e5d1ea769d07039c638d56526b01b10ed33e262becbeed181b55fe54361",
+    "hazard.json": "f1a15a742b1892bb68d5cdeb646edd428f54a30151c6aceabe8d5f99c65043fe",
+    "evidence/meta.json": "0801dc39c6b9b81767b1e72a97c395b82e16d7362d764dfdd0b7ba9c2a66d244",
+    "evidence/world.json": "30300c3f96a24f46b7aa67eeb63cb131a15c15dfcae6b09d740b8957e511ff9f",
+    "evidence/replay.json": "c1f1ff351dfcc6c28980fd9f17515250f409f40420c33807537233246e5a7a1d",
+    "evidence/mc.json": "01872acc45938e4e989ea9e098de325ddc859ef5c8624c07d879327f4af410da",
+    "evidence/hunt.json": "76f48ff296e9bf34a17ef72b8b4957700bb17839a9ceaf050c3bb2a87e75cbd7",
+    "evidence/estimate.json": "8f846114dab06dd601c55011ba94d2e43e4e46325e9b9f816f229884db404e39",
+    "evidence/fix.json": "0ed10e0e83ae52d5dce118a10a0a55b17c2102639cfdb3469c0da740e76a0afa",
+    "evidence/mine.json": "5bc550560ce4beb1fcbf76a08f593acafb128e480cb2a5df4ef04421553b4e12",
+    "evidence/viewer.json": "f8015170f0092eed5bf89b0da30cd71c4143d133f111012a59f194da2e184181"
+  },
+  "limitations": [
+    "Public tests only; private grader not available.",
+    "Pipeline stages executed sequentially at full budget; final full run_all.py all was not repeated.",
+    "Hazard world=scene: conditional stress-test, no calibrated per-trip exposure."
+  ]
+}

@@ -57,3 +57,7 @@ Export: 11 runs and 6000 cloud points. Real viewer screenshots in evidence/shots
 ## Stage 6 completed
 
 Hazard: bicycle swerving from E2 to E1; exported by chapter 10. Official mine uses world=scene, 1500/1500 feasible draws over five hazard ranges, no initial overlaps. Runtime about 372 seconds. Baseline 1070 avoidable /1500; chosen 577 avoidable /1500; zero unavoidable/unattributed, low_speed baseline 0/chosen 3. Exposure=1 is one injected card per designed episode, not measured town-trip frequency; no per_trip comparison. Conditional results and assumptions documented in REPORT Q9. Screenshot exact event at 8.9s; chosen example at 7.2s. Re-exported viewer now contains 17 runs and 6000 cloud points.
+
+## Stage 7 report completed
+
+REPORT.md answers all nine questions, links five genuine viewer screenshots, and separates conditional hazard risk from uncalibrated real-world exposure. Replay-only example re-simulated and archived separately. Final tests outside sandbox: 41 passed in 78.94 seconds. See evidence/submission_audit.json for source hashes and evidence consistency checks. Protected files match origin/main. No private grader is available; full-budget stages were run sequentially, not repeated as a final all command.

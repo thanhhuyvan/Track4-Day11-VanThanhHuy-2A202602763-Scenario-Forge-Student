@@ -2,7 +2,11 @@ MSSV: 202602763
 
 # Lab 11 · Scenario Forge — báo cáo
 
-Mỗi câu: trả lời ngắn, **trích số từ `evidence/`** (ghi tên file và trường, ví dụ `mc.json: crashes = 4`). Grader chạy lại với MSSV của bạn; số không khớp `evidence/` thì mất điểm phần D (RUBRIC), và câu dựa trên số sai khó được điểm đầy đủ. Không cần văn hay: một bảng nhỏ và hai, ba câu giải thích là đủ.
+**Họ tên:** Văn Thành Huy · Bài cá nhân. Mã định danh đầy đủ: 2A202602763; mã số dùng trong lab là **202602763**, theo lựa chọn bỏ tiền tố 2A. Mọi evidence dùng cùng mã và seed do đề sinh, không đổi seed để chọn kết quả.
+
+**Kết quả chính:** MC có 3/3000 lỗi; median IS total≈0,00133349 nhưng bất định lớn. Policy chọn trên TRAIN là cutinLat=3,0; TEST giảm điểm ước lượng lỗi, tiến độ mất khoảng 0,075%, nhưng vẫn chưa chứng nhận lỗi hiếm đã biến mất. Hazard xe đạp bổ sung còn 577/1500 lỗi tránh được với policy sửa, trên một cảnh có điều kiện.
+
+**Nguồn số liệu:** [replay](evidence/replay.json), [MC](evidence/mc.json), [hunt](evidence/hunt.json), [IS](evidence/estimate.json), [policy](evidence/fix.json), [hazard](evidence/mine.json), [provenance](evidence/meta.json). Không dùng --quick cho bằng chứng nộp. Các số làm tròn trong báo cáo chỉ để trình bày; JSON giữ độ chính xác gốc.
 
 Thị trấn của bạn (`meta.json: _run.town`): B
 
@@ -12,7 +16,7 @@ Thị trấn của bạn (`meta.json: _run.town`): B
 
 Trong replay, tác nhân khác đi đúng quỹ đạo log của người lái, không phản ứng với việc planner phanh sớm hơn. Xe sau có thể đi vào xe ego đã giảm tốc dù trong thế giới phản ứng nó sẽ phanh theo; 110/121 va chạm replay thuộc rear. Bản world mặc định cũng có ego–TG contact giả tại t=14,8 s.
 
-Ví dụ replay_only[0] là scenario=1, contact=side; reactive không va chạm và min_ttc_reactive=7,46063 s. Cần xem chương 9 sau export để mô tả chính xác chuỗi chuyển động của ví dụ này; chưa suy diễn tác nhân chỉ từ contact=side.
+Ví dụ `replay.json: replay_only[0]` là scenario=1. Đã chạy lại riêng ba chế độ và lưu [replay_example.json](evidence/replay_example.json), ngoài số tổng chính thức. Replay có ego–C2 contact **side tại 12,35 s**, fake=true; human và reactive không có ego-event, min_ttc_reactive=7,46063 s. Ở cùng frame, ego người lái đã tới x=99,50 m nhưng ego planner chỉ x=90,09 m. C2 trong log/replay giữ x=88,32 m, z=3,59 m và đang lấn từ E2 sang E1, nên cắt vào cạnh ego planner. Trong bản reactive, C2 vẫn ở z=5,25 m (làn E2), a≈−2,20 m/s²: nó chờ/phanh theo tình trạng thật thay vì thực hiện quỹ đạo log. Đây là khác biệt tương tác, không phải chứng minh planner chắc chắn an toàn ở mọi tình huống.
 
 ## 2. Kịch bản bất khả thi (bước B)
 
@@ -95,11 +99,23 @@ Ví dụ núm nghe an toàn hơn: T=2,0 (gốc 1,6) cho TRAIN fail≈0,00274, hi
 
 ## 7. Từ mô phỏng ra đường thật
 
-Phân phối tự nhiên trong `space.py` là giả định. Chọn **ba** giả định ảnh hưởng nhiều nhất đến con số của bạn (ví dụ khe chấp nhận của xe chuyển làn, tỉ lệ người đi bộ ngó qua xe buýt, ma sát đường ướt). Với mỗi cái: dữ liệu thật nào sẽ thay nó, lấy từ đâu, và nếu nó sai thì con số của bạn sai theo hướng nào?
+Ba giả định của town B dưới đây lấy từ `avsim/space.py`; **chưa được hiệu chuẩn bằng dữ liệu thực**. Các nguồn được đề xuất để thu thập/hiệu chuẩn, không phải dữ liệu tôi đã dùng chạy lab.
+
+| Giả định mô phỏng | Dữ liệu thật cần có và nguồn cụ thể | Hướng lệch có thể có |
+|---|---|---|
+| Khe chấp nhận cutGap có median 12 m, lognormal sigma=0,5, kẹp [1;60] m | Quỹ đạo xe trước/sau lúc bắt đầu chuyển làn, khe dọc, tốc độ tương đối và trường hợp chờ không nhập làn. Có thể xây quy trình từ [inD — quỹ đạo tại giao lộ](https://arxiv.org/abs/1911.07602), sau đó đo camera/drone tại đúng phố có xe buýt của tuyến triển khai; không chuyển nguyên phân phối đường cao tốc vào phố | Nếu người thực tế thường chấp nhận khe nhỏ hơn mô hình, có thể tăng tình huống lấn gần ego mà mô hình bỏ sót, khiến rủi ro bị đánh giá thấp. Chiều tác động tổng còn phụ thuộc tốc độ và việc ego/xe sau nhường; cần sensitivity study chứ không khẳng định đơn điệu |
+| pedLook Bernoulli=0,85; pedGap lognormal median 4,5 s, sigma=0,35, kẹp [0,5;15] s | Video đồng bộ từ lề và ego ở điểm xe buýt che khuất; gán nhãn nhìn/ngó trước khi qua, thời điểm bắt đầu, TTC có thể nhìn thấy và tuổi/điều kiện giao thông theo quy trình bảo vệ riêng tư. Quỹ đạo từ camera trên cao không đủ kết luận hướng nhìn; cần góc quay thích hợp | Nếu tỷ lệ nhìn thực tế thấp hơn 0,85 hoặc người qua đường chấp nhận gap nhỏ hơn, mô hình có thể đánh giá thấp sự xuất hiện bất ngờ và lỗi crosswalk. Đây là giả thuyết cần kiểm chứng, không phải mức giảm rủi ro đo được |
+| Wet Bernoulli=0,30, μ=0,5 khi ướt và 0,8 khi khô | Nhật ký mưa/độ ướt theo tuyến và thời gian chạy để ước lượng exposure; đo phanh với lốp/xe đại diện, kết hợp khảo sát ma sát và macrotexture mặt đường. [FHWA friction primer](https://highways.fhwa.dot.gov/safety/rwd/keep-vehicles-road/pavement-friction/pavement-friction-road-safety-primer-friction) mô tả các phương pháp đo; chỉ số thiết bị không tự động bằng hệ số μ của xe | Nếu μ thực thấp hơn giá trị mô phỏng, ở cùng tốc độ quãng phanh v²/(2μg) dài hơn nên mô phỏng có thể quá lạc quan. Tăng tỷ lệ đường ướt không nhất thiết làm xác suất đa tác nhân tăng đơn điệu vì mọi tác nhân cũng phản ứng |
+
+Ba biến có thể tương quan (mưa ảnh hưởng tốc độ/khe nhìn và hành vi). Hiện lab lấy các latent độc lập; hiệu chuẩn từng phân phối biên riêng chưa đủ tái tạo phần đuôi rủi ro chung.
 
 ## 8. Giới hạn
 
-Ba điều mà xác suất bạn báo **không** nói, ví dụ: thế giới chỉ có một con phố; người lái chỉ là IDM; cảm biến hoàn hảo trừ phần bị xe buýt che. Nếu được thêm một tuần, bạn sẽ đo gì tiếp?
+1. **Phạm vi cảnh:** một đoạn phố, vị trí xe buýt/vạch cố định, horizon 24 s. Kết quả không phải xác suất tai nạn mỗi km/năm hoặc ở giao lộ, tuyến, mật độ xe khác. Hazard world=scene chỉ quét quanh một nền giao thông cố định.
+2. **Hành vi và điều khiển:** tác nhân IDM/gap acceptance và đường chuyển động được lập trình, ego chủ yếu điều chỉnh tốc độ. Chưa bao phủ phản ứng con người đa dạng, vi phạm giao thông hoặc mọi chiến lược đánh lái; oracle phanh không phải người lái thật.
+3. **Cảm biến, vật lý và nhãn:** planner dùng trạng thái mô phỏng và mô hình che khuất, không có pipeline camera/LiDAR học từ dữ liệu với đầy đủ false positive, độ trễ và calibration drift. Xe là hộp va chạm và ma sát đơn giản; crosswalk_block là một nhãn thất bại vận hành, không phải contact vật lý. Tổng xác suất failure bao gồm cả nhãn này, không nên gọi tất cả là tai nạn gây thương tích.
+
+**Nếu có thêm một tuần:** cố định policy trước; thu thập các dữ liệu ở câu 7, đánh giá sensitivity có tương quan trên một số cấu hình đường khác, và mở rộng số mẫu/seed. Ưu tiên paired comparison và phần đuôi mà top_share lớn; báo cận cho zero-hit thay vì săn đến khi có một con số đẹp. Với mục tiêu riêng upper<10⁻³ cho mode zero-hit trong mixture beta=0,2, cần hơn 15000 mẫu cho mode đó; chưa dùng ngân sách hiện tại để chứng nhận tiêu chuẩn đó.
 
 ## 9. Rắc rối của bạn (bước G + chương 10)
 
@@ -131,3 +147,12 @@ Policy sửa giảm lỗi có điều kiện từ 0,713333 xuống 0,384667, ch�
 **Tự lái:** chưa thực hiện thử nghiệm người lái; không có egoAcc và không khẳng định bản thân tránh được.
 
 **Đề xuất sửa tiếp:** thêm dự đoán hành lang chiếm chỗ theo vận tốc ngang của bike, tính time-to-lane-entry trước khi khoảng ngang rơi vào ngưỡng leader; giảm tốc nếu hành lang bike giao đường ego trong horizon ngắn. Chỉ tăng cutinLat là heuristic hữu ích nhưng không bao phủ chuyển động ngang liên tục. Chưa triển khai hoặc chọn lại policy trên dữ liệu mine để tránh báo một phép sửa hậu nghiệm như kết quả đã đo.
+
+
+## Tái lập và kiểm tra bài nộp
+
+- Python 3.12.10, NumPy 2.5.4, pytest 9.1.1; Node.js v24.21.0. Phiên bản môi trường trong `requirements-local.lock.txt`, lệnh Windows trong [LOCAL_SETUP.md](LOCAL_SETUP.md).
+- `meta.json: steps` ghi world, replay, mc, hunt, estimate, fix, mine và export đều quick=false. Ngân sách: MC 3000; hunt 4×8×300; IS 3×4×600; fix 12 ứng viên, 400 mẫu/mode và holdout TEST 3000; mine 1500 biến thể.
+- Chỉ triển khai 10 TODO trong lab11; không sửa avsim/, viewer/, run_all.py, tests/ hoặc policy_candidates.json. Các file supplementary replay_example, viewer_capture và capture metadata được ghi riêng, không thay kết quả pipeline chính thức.
+- Đã kiểm thử TODO và parity Python–JS; audit cuối lưu trong `evidence/submission_audit.json`. Audit đối chiếu bằng chứng và file, không thay thế grader với bộ test/seed bí mật. Không tuyên bố điểm chấm khi chưa có grader.
+- Mã, thực thi và biên tập báo cáo có trợ giúp Codex. Số liệu lấy từ các lần chạy thực tại local; không thực hiện tự lái và không giả định đã thu thập dữ liệu đường thật.
