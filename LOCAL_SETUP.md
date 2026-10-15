@@ -28,3 +28,18 @@ Implemented the ten functions in lab11 only: vectorized leader TTC and contact g
 Public TODO tests: 31 passed. Additional checks passed for stable equal-score CEM ranking, Wilson zero/all-event endpoints, and tiny-weight ESS. No changes to avsim/, run_all.py, tests/ or policy_candidates.json. Later stages must interpret zero-hit estimates with the pipeline's upper bounds, not as proof of zero risk.
 
 Stage 2 full verification: 41 tests passed in 34.25 seconds (31 TODO tests + 10 Python/JavaScript parity tests).
+
+## Stage 3 completed (full budgets, no --quick)
+
+Replay: 400 scenarios, no human-crash logs dropped, replay 121 collisions (110 rear, 11 side), reactive zero observed. MC: 3 crashes / 3000, all bus_bypass, Wilson [0.0003401410630, 0.0029361968105]. Zero-hit modes have upper bound 0.0012788956648, not proven zero risk.
+
+Hunt: four modes x eight rounds x 300 samples = 9600 cloud points. Required bus_bypass and crosswalk_block failures both found. Mode-target search outcomes:
+
+| Cuộc săn | Các kiểu tìm được | Bất khả thi bị loại |
+|---|---|---:|
+| bus_bypass | {'bus_bypass': 163} | 2 |
+| cut_in | {'bus_bypass': 30, 'crosswalk_block': 2} | 2 |
+| crosswalk_block | {'crosswalk_block': 64, 'bus_bypass': 1} | 28 |
+| rear_ended | {'bus_bypass': 36, 'crosswalk_block': 3} | 7 |
+
+Files: evidence/replay.json, mc.json, hunt.json, cloud.json, meta.json. Simulator seeds unchanged. Approximate runtimes: replay 28 s, MC 47 s, hunt 172 s. Next stage: importance sampling estimate (three seeds).

@@ -8,13 +8,25 @@
   "world": {
    "quick": false,
    "at": "2026-10-15 16:51"
+  },
+  "replay": {
+   "quick": false,
+   "at": "2026-10-15 17:06"
+  },
+  "mc": {
+   "quick": false,
+   "at": "2026-10-15 17:07"
+  },
+  "hunt": {
+   "quick": false,
+   "at": "2026-10-15 17:08"
   }
  },
  "_run": {
   "mssv": "202602763",
   "town": "B",
   "quick": false,
-  "step": "world",
+  "step": "hunt",
   "salted": false,
   "budgets": {
    "replay_n": 400,
