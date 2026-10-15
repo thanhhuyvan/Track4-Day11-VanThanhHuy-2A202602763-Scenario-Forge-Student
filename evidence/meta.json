@@ -20,13 +20,17 @@
   "hunt": {
    "quick": false,
    "at": "2026-10-15 17:08"
+  },
+  "estimate": {
+   "quick": false,
+   "at": "2026-10-15 17:12"
   }
  },
  "_run": {
   "mssv": "202602763",
   "town": "B",
   "quick": false,
-  "step": "hunt",
+  "step": "estimate",
   "salted": false,
   "budgets": {
    "replay_n": 400,

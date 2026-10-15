@@ -28,7 +28,30 @@ Các kiểu cut_in, crosswalk_block, rear_ended và other chưa xuất hiện tr
 
 ## 4. Importance sampling, ESS và độ suy biến (bước C3)
 
-Bảng: với từng kiểu và từng seed trong `estimate.json`, ghi `p`, `hits`, `ess`, `top_share`. Ba seed có đồng ý với nhau không, và có đồng ý với Monte Carlo không? Ở đâu `top_share` lớn (> 0,5), và vì sao khi đó con số thực ra chỉ là trọng số của một mẫu? So ngân sách (`budget`) với số lần chạy Monte Carlo cần để có cùng độ chính xác. Phần `other` trong tổng lấy từ đâu, và vì sao không săn nó?
+| Seed | Kiểu | p ước lượng | Hits | ESS | top_share |
+|---:|---|---:|---:|---:|---:|
+| 0 | bus_bypass | 0.0017681 | 51 | 127.15 | 0.4968 |
+| 0 | cut_in | 0 hit; upper=0,025 | 0 | 118.49 | 0.0000 |
+| 0 | crosswalk_block | 3.40515e-06 | 106 | 138.61 | 0.5027 |
+| 0 | rear_ended | 0 hit; upper=0,025 | 0 | 106.14 | 0.0000 |
+| 1 | bus_bypass | 0.00087529 | 57 | 129.99 | 0.4156 |
+| 1 | cut_in | 0 hit; upper=0,025 | 0 | 108.32 | 0.0000 |
+| 1 | crosswalk_block | 1.27161e-06 | 129 | 113.18 | 0.2885 |
+| 1 | rear_ended | 0 hit; upper=0,025 | 0 | 133.82 | 0.0000 |
+| 2 | bus_bypass | 0.000827008 | 47 | 123.30 | 0.3009 |
+| 2 | cut_in | 0 hit; upper=0,025 | 0 | 125.76 | 0.0000 |
+| 2 | crosswalk_block | 0.000506485 | 107 | 119.69 | 0.9949 |
+| 2 | rear_ended | 0 hit; upper=0,025 | 0 | 131.32 | 0.0000 |
+
+Tổng ước lượng qua ba seed lần lượt 0.00177150, 0.00087656, 0.00133349; trung vị **0.00133349**, so với MC 0,001. Các tổng chênh nhau khoảng 2.02 lần; khoảng báo bởi pipeline chồng nhau và bao giá trị MC, nhưng không đủ để xác nhận hai phương pháp đã chính xác.
+
+`top_share` là phần tổng w*y do một mẫu lớn nhất đóng góp. Crosswalk_block seed 0 có top_share=0,5027 và seed 2 **0,9949**: gần 99,49% estimate seed 2 do một mẫu quyết định. Seed 2 p≈5,06e-4 cao hơn seed 1 p≈1,27e-6 khoảng 398 lần dù hits gần nhau (107 và 129). ESS đo độ lệch của toàn bộ trọng số, không đo trực tiếp số mẫu lỗi hữu ích. top_share thấp cũng không chứng minh proposal đã bao phủ mọi vùng lỗi.
+
+Budget=16.800 gồm 9.600 mẫu săn + 7.200 mẫu IS (4 kiểu×3 seed×600); chưa gồm MC 3.000 dùng cho other. MC muốn khoảng ±20% tương đối tại p≈0,001 cần xấp xỉ 96.000 lượt. Với crosswalk_block p≈1,27e-6 theo seed 1, cùng công thức cho khoảng 75 triệu lượt; đây chỉ là dự trù rất nhạy theo p. **Không nói IS đã đạt cùng độ chính xác ±20%**: ví dụ bus_bypass seed 1 có 1,96*se/p≈86,7%, còn crosswalk_block seed 2 có relative half-width≈195%. IS tìm được nhiều lỗi hơn trong ngân sách nhỏ nhưng kết quả còn suy biến.
+
+`other` lấy từ MC: 0/3000 quan sát, Wilson upper=0,001278896; pipeline không săn other vì không có một điểm nguy hiểm chung đáng tin cho phần dư. Chưa thấy other không có nghĩa p thật bằng 0.
+
+Cut_in và rear_ended đều zero-hit trong ba seed; dùng **upper_zero_hits=3/(0,2×600)=0,025** cho từng kiểu/seed, không dùng hi=0 của xấp xỉ Gaussian và không thay n bằng ESS. Các khoảng tổng lo/hi trong estimate.json cộng phần other nhưng không cộng các cận zero-hit này cho mọi mode; vì vậy không gọi hi tổng là chứng nhận 95% cho tất cả kiểu chưa thấy. Stage 5 fix có cơ chế fail_hi riêng để xử lý kiểu unseen.
 
 ## 5. Các kiểu thất bại (bước C2 + 3D)
 

@@ -43,3 +43,7 @@ Hunt: four modes x eight rounds x 300 samples = 9600 cloud points. Required bus_
 | rear_ended | {'bus_bypass': 36, 'crosswalk_block': 3} | 7 |
 
 Files: evidence/replay.json, mc.json, hunt.json, cloud.json, meta.json. Simulator seeds unchanged. Approximate runtimes: replay 28 s, MC 47 s, hunt 172 s. Next stage: importance sampling estimate (three seeds).
+
+## Stage 4 completed
+
+Full importance sampling: 3 seeds x 4 modes x 600 samples = 7200 additional samples; budget including hunt = 16800. Runtime about 249 seconds. Total estimates: [0.0017715020489589537, 0.0008765616694409755, 0.0013334928953450914]. Median 0.0013334928953450914. Zero-hit cut_in/rear_ended require upper_zero_hits=0.025 per seed/mode. Crosswalk_block seed 2 top_share=0.9948983 indicates severe one-sample dominance. REPORT question 4 includes all 12 rows and limitations. Evidence provenance and zero-hit formula verified; simulator/seed unchanged.
